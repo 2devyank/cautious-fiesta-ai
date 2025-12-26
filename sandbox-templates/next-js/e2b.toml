@@ -1,0 +1,17 @@
+# This is a config for E2B sandbox template.
+# You can use template ID (c19bifl55wd6iiy7qf03) or template name (cautious-fiesta-ai) to create a sandbox:
+
+# Python SDK
+# from e2b import Sandbox, AsyncSandbox
+# sandbox = Sandbox.create("cautious-fiesta-ai") # Sync sandbox
+# sandbox = await AsyncSandbox.create("cautious-fiesta-ai") # Async sandbox
+
+# JS SDK
+# import { Sandbox } from 'e2b'
+# const sandbox = await Sandbox.create('cautious-fiesta-ai')
+
+team_id = "1d76bc6c-eaba-4771-b3ae-2d061a3c38f4"
+start_cmd = "/compile_page.sh"
+dockerfile = "e2b.Dockerfile"
+template_name = "cautious-fiesta-ai"
+template_id = "c19bifl55wd6iiy7qf03"
