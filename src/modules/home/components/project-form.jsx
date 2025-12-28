@@ -9,8 +9,11 @@ import { Form, FormField } from '@/components/ui/form';
 import TextAreaAutosize from "react-textarea-autosize";
 import { Button } from '@/components/ui/button';
 import { ArrowUp } from 'lucide-react';
-import { onInvoke } from '../actions';
+
 import { toast } from 'sonner';
+import { useCreateProject } from '@/modules/projects/hooks/project';
+import { useRouter } from 'next/navigation';
+import { Spinner } from '@/components/ui/spinner';
 
 const formschema=z.object({
     content:z.string().min(1,{message:"Content is required"}).max(1000,{message:"Content must be less than 1000 characters"}),
@@ -66,30 +69,32 @@ const PROJECT_TEMPLATES = [
     },
   ];
 const ProjectForm = () => {
+    const router=useRouter();
 const [isFocused, setIsFocused] = useState(false)
+const {mutateAsync,isPending}=useCreateProject();
 const form = useForm({
     resolver: zodResolver(formschema),
     defaultValues: {
         content: "",
     },
+    mode:"onChange",
 })
 const handleTemplate=(prompt)=>{
     form.setValue("content", prompt)
 }
-const onSubmit=(values)=>{
-    console.log(values)
-}
-const onInvokeAgent=async()=>{
+const onSubmit=async(values)=>{
     try{
-
-       const res= await onInvoke();
-       console.log("response",res);
-       toast.success("Agent invoked successfully");
+        const res=await mutateAsync(values.content);
+        router.push(`/projects/${res.id}`);
+        toast.success("Project created successfully");
+        form.reset();
+        console.log(res);
     }catch(error){
         console.error(error);
     }
-    
 }
+const isbuttonDisabled=isPending||!form.watch("content").trim();
+
   return (
     <div className='space-y-8'>
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
@@ -104,9 +109,7 @@ PROJECT_TEMPLATES.map((template)=>(
 ))
             }
         </div>
-        <Button onClick={onInvokeAgent}>
-            Invoke Agent
-        </Button>
+      
 
         <div className='relative flex items-center justify-center py-4'>
             <Separator className='absolute' />
@@ -141,8 +144,9 @@ PROJECT_TEMPLATES.map((template)=>(
                 )}
                 />
                 <div className='flex justify-end'>
-                    <Button onClick={()=>form.handleSubmit(onSubmit)} type='submit' className='cursor-pointer size-8 rounded-full    '>
-                        <ArrowUp className='size-4 text-white' />
+                    <Button disabled={isbuttonDisabled} onClick={()=>form.handleSubmit(onSubmit)} type='submit'
+                     className={cn("cursor-pointer size-8 rounded-full", isbuttonDisabled && "opacity-50 cursor-not-allowed")}>
+                       {isPending ? <Spinner className='size-4 text-white' /> : <ArrowUp className='size-4 text-white' />}
                     </Button>
                 </div>
             </form>

@@ -1,6 +1,6 @@
 // import { PrismaClient } from "@prisma/client";
 
-import { PrismaClient } from "@/generated/prisma/client";
+import { PrismaClient } from "@/generated/client/client";
 
 
 const db=globalThis.prisma || new PrismaClient({
