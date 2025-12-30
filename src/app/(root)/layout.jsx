@@ -5,9 +5,9 @@ import React from 'react'
 const layout =async ({children}) => {
     await onBoardUser();
   return (
-    <main className=' h-screen'>
+    <main className='h-screen flex flex-col overflow-hidden'>
         <Navbar/>
-        <div className='w-full h-full'>{children}</div>
+        <div className='w-full flex-1 overflow-y-auto'>{children}</div>
     </main>
   )
 }

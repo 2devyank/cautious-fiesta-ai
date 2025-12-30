@@ -96,8 +96,8 @@ const onSubmit=async(values)=>{
 const isbuttonDisabled=isPending||!form.watch("content").trim();
 
   return (
-    <div className='space-y-8'>
-        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
+    <div className='space-y-8 w-full'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full'>
             {
 PROJECT_TEMPLATES.map((template)=>(
     <div key={template.title} onClick={()=>handleTemplate(template.prompt)} className='bg-muted p-4 rounded-lg cursor-pointer hover:bg-muted/80 transition-all duration-300' >

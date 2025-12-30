@@ -77,7 +77,7 @@ export const codeAgentFunction = inngest.createFunction({
                     "createOrUpdateFiles",
                     async()=>{
                         try{
-                            const updatedFiles=network?.state?.data.files||[];
+                            const updatedFiles=network?.state?.data?.files||{};
                             const sandbox=await Sandbox.connect(sandboxId);
                             for(const file of files){
                                 await sandbox.files.write(file.path,file.content);
@@ -99,7 +99,7 @@ export const codeAgentFunction = inngest.createFunction({
                 name:'readFiles',
                 description:"read files in the sandbox",
                 parameters:z.object({
-                    paths:z.array(z.string()),
+                    files:z.array(z.string()),
                 }),
                 handler:async({files},{step})=>{
                     return await step?.run("readFiles",async()=>{
@@ -108,7 +108,7 @@ export const codeAgentFunction = inngest.createFunction({
                             const contents=[];
                             for(const file of files){
                                 const content=await sandbox.files.read(file);
-                                contents.push({path:file,content:content});
+                                contents.push({path:file,content});
                             }
                             return JSON.stringify(contents);
                         }catch(error){
@@ -147,7 +147,7 @@ export const codeAgentFunction = inngest.createFunction({
        const result=await network.run(event.data.value);
        const isError=!result.state.data.summary||Object.keys(result.state.data.summary).length===0;
        
-
+console.log("result.state.data.summary",result,result.state.data);
        const sandboxUrl=await step.run("get-sandbox-url",async()=>{
         const sandbox=await Sandbox.connect(sandboxId);
         const host= sandbox.getHost(3000);
