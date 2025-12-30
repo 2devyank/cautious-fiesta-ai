@@ -3,9 +3,11 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/componen
 import React, { useState } from 'react'
 import ProjectHeader from './project-header'
 import MessageContainer from './message-container'
+import { AgentResult } from './agent-code'
 
 const ProjectView = ({projectId}) => {
   const [activeFragment,setActiveFragment]=useState(null);
+  console.log("activeFragment",activeFragment);
   return (
     <div className='h-screen'>
         <ResizablePanelGroup direction="horizontal">
@@ -24,7 +26,7 @@ const ProjectView = ({projectId}) => {
             minSize={50}
             className="flex flex-col min-h-0"
             >
-
+            { activeFragment && <AgentResult files={activeFragment[0]?.files} url={activeFragment[0]?.sandboxUrl}  title={activeFragment[0]?.title} />}
             </ResizablePanel>
         </ResizablePanelGroup>
     </div>
