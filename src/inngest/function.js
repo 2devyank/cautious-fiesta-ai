@@ -2,7 +2,7 @@ import Sandbox from "e2b";
 import { inngest } from "./client";
 import { gemini, createAgent, createTool, createNetwork } from "@inngest/agent-kit";
 import z from "zod";
-import { PROMPT } from "@/prompt";
+import { FRAGMENT_TITLE_PROMPT, PROMPT, RESPONSE_PROMPT } from "@/prompt";
 import { lastAssistantTextMessageContent } from "./utils";
 import db from "@/lib/db";
 import { MessageRole, MessageType } from "@/generated/client/enums";
@@ -145,6 +145,32 @@ export const codeAgentFunction = inngest.createFunction({
         }
        })
        const result=await network.run(event.data.value);
+       const responseGenerator=createAgent({
+        name:"response-generator",
+        description:"An expert response generator for code fragments",
+        system:RESPONSE_PROMPT,
+        model:gemini({ model: "gemini-2.5-flash" }),
+       })
+       const {output:promptresponse}=await responseGenerator.run(result.state.data.summary);
+       
+       const fragmentTitleGenerator=createAgent({
+        name:"fragment-title-generator",
+        description:"An expert title generator for code fragments",
+        system:FRAGMENT_TITLE_PROMPT,
+        model:gemini({ model: "gemini-2.5-flash" }),
+       })
+       const {output:fragmentTitle}=await fragmentTitleGenerator.run(result.state.data.summary);
+       
+
+       const extractContent=(fragmentTitle)=>{
+        if(fragmentTitle[0].type!=="text"){
+            return "Untitled";
+        }
+        if(Array.isArray(fragmentTitle[0].content)){
+            return fragmentTitle[0].content.map((item)=>item).join(" ");
+        }
+        return fragmentTitle[0].content;
+       }
        const isError=!result.state.data.summary||Object.keys(result.state.data.summary).length===0;
        
 console.log("result.state.data.summary",result,result.state.data);
@@ -167,13 +193,13 @@ console.log("result.state.data.summary",result,result.state.data);
         return await db.message.create({
             data:{
                 projectId:event.data.projectId,
-                content:result.state.data.summary,
+                content:extractContent(promptresponse),
                 role:MessageRole.ASSISTANT,
                 type:MessageType.RESULT,
                 fragments:{
                     create:{
                         sandboxUrl:sandboxUrl,
-                        title:"Untitled",
+                        title:extractContent(fragmentTitle),
                         files:result.state.data.files,
                     }
                 }

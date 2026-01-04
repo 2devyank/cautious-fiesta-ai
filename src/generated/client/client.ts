@@ -64,3 +64,8 @@ export type Message = Prisma.MessageModel
  * 
  */
 export type Fragment = Prisma.FragmentModel
+/**
+ * Model Usage
+ * 
+ */
+export type Usage = Prisma.UsageModel

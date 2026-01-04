@@ -9,6 +9,12 @@ import { getCurrentUser } from "@/modules/auth/actions";
 export const createProject=async(value)=>{
     const user=await getCurrentUser();
     if(!user) throw new Error("User not found");
+    try{
+        await consumeCredits();
+    }catch(error){
+        console.error("Error in consumeCredits:", error);
+        throw new Error("something went wrong");
+    }
     const newProject=await db.project.create({
         data:{
             name:generateSlug(2,{format:"kebab"}),

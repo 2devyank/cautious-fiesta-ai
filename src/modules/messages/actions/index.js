@@ -4,6 +4,7 @@ import { MessageRole, MessageType } from "@/generated/client/enums";
 import db from "@/lib/db";
 import { getCurrentUser } from "@/modules/auth/actions";
 import { inngest } from "@/inngest/client";
+import { consumeCredits } from "@/lib/usage";
 
 export const createMessage=async(value,projectID)=>{
     const user=await getCurrentUser();
@@ -18,7 +19,12 @@ export const createMessage=async(value,projectID)=>{
     if(!project) throw new Error("Project not found");
     if(project.userId !== user.id) throw new Error("Unauthorized access to project");
 
-
+    try{
+        await consumeCredits();
+    }catch(error){
+        console.error("Error in consumeCredits:", error);
+        throw new Error("something went wrong");
+    }
     const newMessage=await db.message.create({
         data:{
             content:value,

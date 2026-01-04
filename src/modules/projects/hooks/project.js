@@ -11,7 +11,7 @@ export const useCreateProject=()=>{
     const queryClient=useQueryClient();
     return useMutation({
         mutationFn:(value)=>createProject(value),
-        onSuccess:()=>queryClient.invalidateQueries(["projects"])
+        onSuccess:()=>queryClient.invalidateQueries(["projects","status"])
     })
 }
 export const useGetProjectById=(id)=>{

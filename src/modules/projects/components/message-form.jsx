@@ -15,12 +15,17 @@ import { useCreateProject } from '@/modules/projects/hooks/project';
 import { useRouter } from 'next/navigation';
 import { Spinner } from '@/components/ui/spinner';
 import { useCreateMessages } from '@/modules/messages/hooks/messages';
+import { useStatus } from '@/modules/usage/hooks';
+import { Usage } from '@/modules/usage/components/usage';
 
 const formschema=z.object({
     content:z.string().min(1,{message:"Content is required"}).max(1000,{message:"Content must be less than 1000 characters"}),
 })
 
 const MessageForm = ({projectId}) => {
+    const {data:status}=useStatus();
+    const hasStatus=!!status;
+    console.log("status",status);
   
 const [isFocused, setIsFocused] = useState(false)
 const {mutateAsync,isPending}=useCreateMessages(projectId);
@@ -48,6 +53,7 @@ const onSubmit=async(values)=>{
 
        
         <Form {...form}>
+            {hasStatus && <Usage />}
             <form onSubmit={form.handleSubmit(onSubmit)}
              className={cn("relative bg-sidebar p-4 pt-1 border rounded-xl transition-all dark:bg-sidebar", isFocused && "border-2 border-primary rounded-lg p-4")}>
                 <FormField

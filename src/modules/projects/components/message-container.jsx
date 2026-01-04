@@ -55,6 +55,9 @@ const MessageContainer = ({projectId,activeFragment,setActiveFragment}) => {
         </div>
         </div>
   }
+  const lastUserMessage=sortedMessages?.findLast(message=>message.role===MessageRole.USER);
+  const lastMessage = sortedMessages && sortedMessages.length > 0 ? sortedMessages[sortedMessages.length - 1] : null;
+  const isLastMessageFromUser = lastMessage?.role === MessageRole.USER;
   console.log("messages",messages);
     return (
     <div className='min-h-0 flex flex-1 flex-col'>
@@ -70,6 +73,14 @@ const MessageContainer = ({projectId,activeFragment,setActiveFragment}) => {
                 type={message.type}
                  />
             ))}
+            {isLastMessageFromUser && (
+              <div className='flex justify-end px-2 pb-4'>
+                <div className='flex items-center gap-2 text-sm text-muted-foreground'>
+                  <Spinner />
+                  <span>Waiting for agent response...</span>
+                </div>
+              </div>
+            )}
             <div ref={bottomRef} className='h-0' />
         </div>
             
