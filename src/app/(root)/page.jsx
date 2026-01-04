@@ -1,6 +1,7 @@
 import ProjectForm from '@/modules/home/components/project-form';
 import ProjectList from '@/modules/home/components/project-list';
 import React from 'react'
+export const runtime = "edge";
 
 const Page = () => {
   return (

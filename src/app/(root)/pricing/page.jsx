@@ -1,4 +1,5 @@
 "use client"
+export const runtime = "edge";
 import { PricingTable } from '@clerk/nextjs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
